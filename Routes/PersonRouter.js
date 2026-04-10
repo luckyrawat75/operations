@@ -1,16 +1,15 @@
 const express = require("express");
 const router = express.Router();
 
-
-const Food = require("../models/person"); 
+const Food = require("../models/person");
 
 const db = require("../db");
 
 router.post("/", async (req, res) => {
   try {
-    const { name, email, city } = req.body;
+    const { name, email, city, username, password } = req.body;
 
-    if (!name || !email || !city) {
+    if (!name || !email || !city || !username || !password) {
       return res.status(400).json({
         error: "please provide all the details",
       });
@@ -20,6 +19,8 @@ router.post("/", async (req, res) => {
       name,
       email,
       city,
+      username,
+      password,
     });
 
     const result = await newuser.save();
@@ -63,6 +64,5 @@ router.get("/:id", async (req, res) => {
     });
   }
 });
-
 
 module.exports = router;
