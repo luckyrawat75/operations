@@ -1,40 +1,17 @@
 const express = require("express");
 const app = express();
-const Food = require("./models/person");
+
 require("dotenv").config();
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
+const passport = require("./auth");
 
 app.use(express.json());
 app.use(passport.initialize());
 const PORT = process.env.PORT || 3300;
 
-passport.use(
-  new LocalStrategy(async (username, password, done) => {
-    try {
-      const user = await Food.findOne({ username });
-
-      if (!user) {
-        return done(null, false, { message: "Incorrect username" });
-      }
-
-      const isMatch = user.password === password;
-
-      if (isMatch) {
-        return done(null, user);
-      } else {
-        return done(null, false, { message: "Incorrect password" });
-      }
-    } catch (error) {
-      return done(error);
-    }
-  }),
-);
-
 // ✅ Routes
 
 const localauth = passport.authenticate("local", { session: false });
-app.get("/", localauth, (req, res) => {
+app.get("/", (req, res) => {
   res.send("welcome to our hotel");
 });
 
