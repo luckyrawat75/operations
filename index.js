@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 });
 
 const PersonRoutes = require("./Routes/PersonRouter");
-app.use("/person", localauth, PersonRoutes);
+app.use("/person", PersonRoutes);
 
 const MenuItemRouters = require("./Routes/MenuItemRouters");
 

@@ -1,23 +1,25 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
-// Schema
 const foodSchema = new mongoose.Schema({
   name: String,
   email: String,
   city: String,
   age: Number,
-  username: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
+  username: { type: String, required: true },
+  password: { type: String, required: true },
 });
 
-// Model
-const Food = mongoose.model("Food", foodSchema);
+foodSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
 
-// ✅ Export (CommonJS)
-module.exports = Food;
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+foodSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+module.exports = mongoose.model("Food", foodSchema);
